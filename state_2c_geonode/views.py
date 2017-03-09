@@ -15,12 +15,16 @@ def h_keywords(request):
     if type_filter is not None:
         queryset = type_filter.objects.filter(title__icontains=text_filter)
 
-    keywords = hk.objects.none()
+    kw_ids = []
     if queryset is not None:
         for element in queryset:
-            keywords = keywords | element.keywords.all()
+            for kw in element.keywords.all():
+                if kw.is_root():
+                    kw_ids.append(kw.id)
+                else:
+                    kw_ids.append(hk.get_ancestors(kw)[0].id)
 
-        keywords = keywords.distinct()
+        keywords = hk.objects.filter(id__in=kw_ids).distinct()
         dumped_kw = []
         for keyword in keywords:
             dumped_kw.append(hk.dump_bulk_tree(keyword)[0])
