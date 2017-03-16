@@ -3,20 +3,22 @@ import json
 from django.http import HttpResponse
 from geonode.base.models import HierarchicalKeyword as hk
 from geonode.api.api import FILTER_TYPES
+from geonode.base.models import ResourceBase
 
 
 def h_keywords(request):
     type_filter = FILTER_TYPES[request.GET.get('type')] if request.GET.get('type', None) in FILTER_TYPES.keys() \
-        else None
+        else ResourceBase
 
     text_filter = request.GET.get('q', '')
+    category_filter = request.GET.getlist('category', None)
+    initial_keyword =request.GET.get('keyword', None)
 
-    category_filter = request.GET.get('category', None)
-    queryset = None
-    if type_filter is not None:
-        queryset = type_filter.objects.filter(title__icontains=text_filter)
-        if category_filter is not None:
-            queryset = queryset.filter(category__identifier__icontains=category_filter)
+    queryset = type_filter.objects.filter(title__icontains=text_filter)
+    if len(category_filter) > 0:
+        queryset = queryset.filter(category__identifier__in=category_filter)
+    if initial_keyword is not None:
+        queryset = queryset.filter(keywords__slug=initial_keyword)
 
     kw_ids = []
     if queryset is not None:

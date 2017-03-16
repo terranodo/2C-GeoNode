@@ -69,6 +69,9 @@
     if ($location.search().hasOwnProperty('category__identifier__in')){
       params['category'] = $location.search()['category__identifier__in'];
     }
+    if ($location.search().hasOwnProperty('keywords__slug__in')){
+      params['keyword'] = $location.search()['keywords__slug__in'];
+    }
     $http.get(H_KEYWORDS_ENDPOINT, {params: params}).success(function(data){
       $('#treeview').treeview({
         data: data,
