@@ -11,9 +11,12 @@ def h_keywords(request):
 
     text_filter = request.GET.get('q', '')
 
+    category_filter = request.GET.get('category', None)
     queryset = None
     if type_filter is not None:
         queryset = type_filter.objects.filter(title__icontains=text_filter)
+        if category_filter is not None:
+            queryset = queryset.filter(category__identifier__icontains=category_filter)
 
     kw_ids = []
     if queryset is not None:

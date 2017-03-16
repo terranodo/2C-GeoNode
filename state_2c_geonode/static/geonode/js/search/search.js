@@ -66,6 +66,9 @@
     if ($location.search().hasOwnProperty('title__icontains')){
       params['q'] = $location.search()['title__icontains'];
     }
+    if ($location.search().hasOwnProperty('category__identifier__in')){
+      params['category'] = $location.search()['category__identifier__in'];
+    }
     $http.get(H_KEYWORDS_ENDPOINT, {params: params}).success(function(data){
       $('#treeview').treeview({
         data: data,
@@ -442,7 +445,7 @@
       if(query_entry.length == 0){
         delete($scope.query[data_filter]);
       }
-      query_api($scope.query);
+      query_api($scope.query, true);
     }
 
     $scope.single_choice_listener = function($event){
